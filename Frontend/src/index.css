@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #7c3aed;
+  --color-primary-light: #9a66ff;
+  --color-primary-dark: #6025c0;
+  --color-accent: #f97316;
+  --color-background: #f9fafb;
+  --color-foreground: #ffffff;
+  --color-text: #333333;
+  --color-text-light: #6b7280;
+  --color-border: #e5e7eb;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm p-4 transition-all duration-200 hover:shadow-md;
+  }
+
+  .form-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .nav-link {
+    @apply text-gray-600 hover:text-purple-600 transition-colors duration-200;
+  }
+
+  .nav-link-active {
+    @apply text-purple-600 font-medium;
+  }
+}
