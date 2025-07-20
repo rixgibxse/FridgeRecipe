@@ -57,3 +57,6 @@ steps:
 images:
   - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/backend:$SHORT_SHA'
   - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/frontend:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
