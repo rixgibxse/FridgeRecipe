@@ -3,7 +3,7 @@ import axios from 'axios';
 // Buat instance axios dengan konfigurasi dasar
 const api = axios.create({
   // URL dasar dari backend API kita
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://fridgerecipe-backend-98947593844.asia-southeast2.run.app",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://fridgerecipe-backend-98947593844.asia-southeast2.run.app/api",
 });
 
 // Buat "interceptor" untuk permintaan
