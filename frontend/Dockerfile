@@ -1,4 +1,4 @@
-# TAHAP 1: BUILD APLIKASI REACT (Lebih Efisien)
+# TAHAP 1: BUILD APLIKASI REACT
 FROM node:18-alpine AS build
 WORKDIR /app
 
@@ -18,7 +18,7 @@ ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 # 5. Build aplikasi
 RUN npm run build
 
-# TAHAP 2: SIAPKAN SERVER NGINX (Lebih Aman)
+# TAHAP 2: SIAPKAN SERVER NGINX
 FROM nginx:stable-alpine
 
 # Hapus konfigurasi default Nginx
@@ -30,11 +30,11 @@ COPY ./nginx.conf.template /etc/nginx/conf.d/default.conf.template
 # Install 'gettext' untuk envsubst DAN 'dos2unix' untuk memperbaiki line endings
 RUN apk add --no-cache gettext dos2unix
 
-# Buat user dan grup non-root 'nginx'
-RUN addgroup -S nginx && adduser -S nginx -G nginx
+# --- BARIS INI DIHAPUS ---
+# RUN addgroup -S nginx && adduser -S nginx -G nginx
+# Alasan: User dan grup 'nginx' sudah ada di base image.
 
 # Ganti kepemilikan file yang relevan ke user non-root
-# Ini penting agar Nginx bisa menulis log dan file sementara
 RUN chown -R nginx:nginx /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
 RUN touch /var/run/nginx.pid && chown -R nginx:nginx /var/run/nginx.pid
 
