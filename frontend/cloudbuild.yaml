@@ -1,0 +1,38 @@
+steps:
+  # 1. Bangun Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      # Variabel ini akan diisi oleh Trigger Cloud Build dari Secret Manager
+      - 'VITE_API_BASE_URL=${_API_URL}'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/fridge-recipe-frontend:$COMMIT_SHA'
+      - '.'
+      - '-f'
+      - 'frontend/Dockerfile'
+
+  # 2. Push image ke Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/fridge-recipe-frontend:$COMMIT_SHA']
+
+  # 3. Deploy image ke Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      # Ganti dengan nama service Cloud Run Anda
+      - 'fridge-recipe-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/fridge-recipe-frontend:$COMMIT_SHA'
+      # Ganti dengan region Anda
+      - '--region'
+      - 'asia-southeast2'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+# Menyimpan image yang sudah di-build
+images:
+  - 'gcr.io/$PROJECT_ID/fridge-recipe-frontend:$COMMIT_SHA'

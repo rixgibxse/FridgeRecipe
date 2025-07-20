@@ -1,0 +1,16 @@
+# Abaikan dependensi lokal, karena akan di-install di dalam kontainer
+node_modules
+
+# Abaikan folder build lokal
+dist
+
+# Abaikan file-file Git
+.git
+.gitignore
+
+# Abaikan file-file Docker
+Dockerfile
+.dockerignore
+
+# Abaikan file lainnya yang tidak relevan dengan build
+README.md
