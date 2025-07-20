@@ -1,0 +1,59 @@
+steps:
+  # Langkah 1: Build & Push Docker Image untuk Backend
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/backend:$SHORT_SHA', './backend']
+    id: 'Build Backend Image'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/backend:$SHORT_SHA']
+    id: 'Push Backend Image'
+
+  # Langkah 2: Deploy Backend ke Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'fridgerecipe-backend' # Nama service Cloud Run backend
+      - '--image=asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/backend:$SHORT_SHA'
+      - '--region=asia-southeast2'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--vpc-connector=fridgerecipe-connector' # Menghubungkan ke VPC Connector
+      - '--set-env-vars=GCS_BUCKET_NAME=fridge-recipe-images,DB_NAME=fridgerecipe_prod,DB_HOST=10.11.16.2' 
+      - '--update-secrets=DB_USER=db-user:latest,DB_PASS=db-pass:latest,JWT_SECRET=jwt-secret:latest,GEMINI_API_KEY=gemini-api-key:latest,SENDGRID_API_KEY=sendgrid-api-key:latest,STABILITY_API_KEY=stability-api-key:latest'
+    id: 'Deploy Backend Service'
+
+  # Langkah 3: Build & Push Docker Image untuk Frontend
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      # Mengirim URL backend ke Dockerfile frontend
+      - 'VITE_BACKEND_URL=https://fridgerecipe-backend-app-url.a.run.app' # Ganti dengan URL backend Anda setelah deploy pertama
+      - '-t'
+      - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/frontend:$SHORT_SHA'
+      - './frontend'
+    id: 'Build Frontend Image'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/frontend:$SHORT_SHA']
+    id: 'Push Frontend Image'
+
+  # Langkah 4: Deploy Frontend ke Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'fridgerecipe-frontend' # Nama service Cloud Run frontend
+      - '--image=asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/frontend:$SHORT_SHA'
+      - '--region=asia-southeast2'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+    id: 'Deploy Frontend Service'
+
+# Menentukan gambar mana yang akan di-push ke Artifact Registry
+images:
+  - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/backend:$SHORT_SHA'
+  - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/fridgerecipe-repo/frontend:$SHORT_SHA'
