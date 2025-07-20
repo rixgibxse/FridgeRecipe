@@ -1,32 +1,32 @@
-FROM node:18 AS build
+# TAHAP 1: INSTALASI DEPENDENSI
+FROM node:18-alpine AS deps
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
+COPY package.json package-lock.json ./
+# Hanya install dependensi produksi untuk menjaga image tetap kecil
+RUN npm ci --omit=dev
 
-FROM node:18-slim
+
+# TAHAP 2: BUILD FINAL IMAGE
+FROM node:18-alpine
+
 WORKDIR /app
 
-# Install curl for health check
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Salin dependensi yang sudah di-install dari tahap sebelumnya
+COPY --from=deps /app/node_modules ./node_modules
 
-# Copy node_modules from build stage
-COPY --from=build /app/node_modules ./node_modules
-
-# Copy application code
+# Salin sisa kode aplikasi Anda
 COPY . .
 
-RUN rm -f ./.env
+# Salin entrypoint script ke dalam image
+COPY entrypoint.sh ./entrypoint.sh
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
-USER appuser
+# Berikan izin eksekusi pada skrip tersebut
+RUN chmod +x ./entrypoint.sh
 
-# Health check - use PORT environment variable
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:${PORT:-8080}/health || exit 1
+# Atur entrypoint untuk menjalankan skrip startup Anda
+ENTRYPOINT ["./entrypoint.sh"]
 
-# Start application
-CMD [ "npm", "start" ]
+# Perintah default untuk menjalankan server Anda
+# Pastikan nama file utama Anda adalah "server.js"
+CMD ["node", "server.js"]
