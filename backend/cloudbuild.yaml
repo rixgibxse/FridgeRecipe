@@ -1,0 +1,40 @@
+steps:
+# Langkah 1: Bangun image Docker tanpa cache
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '--no-cache'
+  - '-t'
+  - 'asia-southeast2-docker.pkg.dev/fridgerecipeapps/cloud-run-source-deploy/fridge-recipe-backend:latest'
+  - '.'
+
+# Langkah 2: Unggah (push) image ke Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'push'
+  - 'asia-southeast2-docker.pkg.dev/fridgerecipeapps/cloud-run-source-deploy/fridge-recipe-backend:latest'
+
+# Langkah 3: Deploy image yang baru ke Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'fridge-recipe-backend'
+  - '--image'
+  - 'asia-southeast2-docker.pkg.dev/fridgerecipeapps/cloud-run-source-deploy/fridge-recipe-backend:latest'
+  - '--region'
+  - 'asia-southeast2'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+  - '--add-cloudsql-instances'
+  - 'fridgerecipeapps:asia-southeast2:fridge-recipe-db'
+  - '--set-env-vars'
+  - 'NODE_ENV=production,DB_USER=fridgerecipe-db,DB_NAME=fridge_recipe_db,DB_INSTANCE_CONNECTION_NAME=fridgerecipeapps:asia-southeast2:fridge-recipe-db,GCS_BUCKET_NAME=fridge-recipe-images,FRONTEND_URL=http://34.160.200.211/'
+  - '--set-secrets'
+  - 'DB_PASS=db_pass:latest,JWT_SECRET=jwt_secret:latest,GEMINI_API_KEY=gemini_api_key:latest,SENDGRID_API_KEY=sendgrid_api_key:latest,STABILITY_API_KEY=stability_api_key:latest'
+images:
+- 'asia-southeast2-docker.pkg.dev/fridgerecipeapps/cloud-run-source-deploy/fridge-recipe-backend:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

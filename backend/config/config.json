@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "fridgerecipe-db",
+    "password": "Redaksi123",
+    "database": "fridge_recipe_db",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "fridgerecipe-db",
+    "password": "Redaksi123",
+    "database": "fridge_recipe_db_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "fridgerecipe-db",
+    "password": "Redaksi123",
+    "database": "fridge_recipe_db",
+    "host": "/cloudsql/fridgerecipeapps:asia-southeast2:fridge-recipe-db",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "socketPath": "/cloudsql/fridgerecipeapps:asia-southeast2:fridge-recipe-db"
+    }
+  }
+}
