@@ -17,13 +17,12 @@ COPY --from=build /app/node_modules ./node_modules
 # Copy application code
 COPY . .
 
+RUN rm -f ./.env
+
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 RUN chown -R appuser:appuser /app
 USER appuser
-
-# Expose port (this is just documentation, Cloud Run uses PORT env var)
-EXPOSE 8080
 
 # Health check - use PORT environment variable
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
