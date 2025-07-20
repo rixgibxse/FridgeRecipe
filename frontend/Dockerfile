@@ -1,19 +1,27 @@
-# Tahap 1: Build aolikasi React
+# TAHAP 1: BUILD APLIKASI REACT
 FROM node:18-alpine AS build
 WORKDIR /app
-COPY package*.json ./
+COPY package.json ./
 RUN npm install
 COPY . .
-# Ganti VITE_BACKEND_URL dengan URL API backend Anda saat proses build
-# Kita akan atur ini di cloudbuild.yaml nanti
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 RUN npm run build
 
-# Tahap 2: Sajikan file statis dengan Nginx
+# TAHAP 2: SIAPKAN SERVER NGINX
 FROM nginx:stable-alpine
+# Install 'gettext' untuk perintah 'envsubst'
+RUN apk add --no-cache gettext
+
 # Salin hasil build dari tahap sebelumnya
 COPY --from=build /app/dist /usr/share/nginx/html
-# Nginx secara default akan menyajikan file dari direktori ini
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Salin template konfigurasi Nginx
+COPY ./nginx.conf.template /etc/nginx/conf.d/default.conf.template
+
+# Salin dan berikan izin eksekusi pada startup script
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Jalankan startup script saat container dimulai
+ENTRYPOINT ["/entrypoint.sh"]
