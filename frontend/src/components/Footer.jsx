@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ChefHat, Github } from 'lucide-react';
+import { ChefHat, Github, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
