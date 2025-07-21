@@ -29,4 +29,4 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 # Perintah default untuk menjalankan server Anda
 # Pastikan nama file utama Anda adalah "server.js"
-CMD ["node", "server.js"]
+CMD ["node", "index.js"]
