@@ -1,16 +1,16 @@
 {
   "development": {
-    "username": "fridgerecipe-db",
-    "password": "Redaksi123",
-    "database": "fridge_recipe_db",
-    "host": "127.0.0.1",
+    "username": "fridgerecipe_user",
+    "password": "redaksi123",
+    "database": "fridgerecipe_prod",
+    "host": "10.11.16.2",
     "dialect": "mysql"
   },
   "test": {
-    "username": "fridgerecipe-db",
-    "password": "Redaksi123",
-    "database": "fridge_recipe_db_test",
-    "host": "127.0.0.1",
+    "username": "fridgerecipe_user",
+    "password": "redaksi123",
+    "database": "fridgerecipe_prod",
+    "host": "10.11.16.2",
     "dialect": "mysql"
   },
   "production": {
