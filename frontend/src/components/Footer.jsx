@@ -19,6 +19,12 @@ const Footer = () => {
               <a href="https://github.com/fadjriarii" className="text-gray-500 hover:text-purple-600">
                 <Github size={20} />
               </a>
+              <a href="https://www.linkedin.com/in/auliafadjri/" className="text-gray-500 hover:text-purple-600">
+                <Linkedin size={20} />
+              </a>
+              <a href="https://www.instagram.com/fadjriarii/" className="text-gray-500 hover:text-purple-600">
+                <Instagram size={20} />
+              </a>
             </div>
           </div>
 
