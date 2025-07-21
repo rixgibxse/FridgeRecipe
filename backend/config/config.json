@@ -14,9 +14,9 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "fridgerecipe-db",
-    "password": "Redaksi123",
-    "database": "fridge_recipe_db",
+    "username": "fridgerecipe_user",
+    "password": "redaksi123",
+    "database": "fridgerecipe_prod",
     "host": "/cloudsql/turnkey-env-466523-u2:asia-southeast2:fridgerecipe-db-instance",
     "dialect": "mysql",
     "dialectOptions": {
