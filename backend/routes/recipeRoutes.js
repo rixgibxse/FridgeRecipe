@@ -18,7 +18,7 @@ router.post('/favorites', protect, recipeController.addFavoriteRecipe);
 // Menghapus resep favorit
 router.delete('/favorites/:id', protect, recipeController.deleteFavoriteRecipe);
 
-// Mendapatkan detail resep umum berdasarkan ID (jika ada rute ini)
+// Mendapatkan detail resep umum berdasarkan ID
 router.get('/recipes/:id', recipeController.getRecipeById);
 
 module.exports = router;

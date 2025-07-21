@@ -5,7 +5,7 @@ const {
   uploadImageFromBuffer,
   deleteImageFromGCS,
 } = require('../config/imageService');
-const { v4: uuidv4 } = require('uuid'); // Pastikan uuid diimpor jika digunakan
+const { v4: uuidv4 } = require('uuid'); // Pastikan uuid diimpor
 
 const generateRecipe = async (req, res) => {
   try {
@@ -72,10 +72,9 @@ const addFavoriteRecipe = async (req, res) => {
   const t = await db.transaction();
   try {
     const imageBuffer = Buffer.from(imageData, 'base64');
-    const filename = `recipes/${uuidv4()}.jpeg`; // Menambahkan nama file unik
-    const imageUrl = await uploadImageFromBuffer(imageBuffer, filename); // Menggunakan filename
+    const filename = `recipes/${uuidv4()}.jpeg`;
+    const imageUrl = await uploadImageFromBuffer(imageBuffer, filename);
 
-    // Memastikan ingredients dan instructions disimpan sebagai string JSON
     const ingredientsString = JSON.stringify(ingredients);
     const instructionsString = JSON.stringify(instructions);
 
@@ -84,14 +83,13 @@ const addFavoriteRecipe = async (req, res) => {
       defaults: {
         recipeName,
         description,
-        ingredients: ingredientsString, // Disimpan sebagai string JSON
-        instructions: instructionsString, // Disimpan sebagai string JSON
+        ingredients: ingredientsString,
+        instructions: instructionsString,
         imageUrl,
       },
       transaction: t,
     });
 
-    // Periksa apakah resep sudah ada di favorit pengguna
     const existingFavorite = await Favorite.findOne({
         where: {
             UserId: userId,
@@ -122,16 +120,18 @@ const addFavoriteRecipe = async (req, res) => {
   }
 };
 
-const getFavoriteRecipes = async (req, res) => { 
+const getFavoriteRecipes = async (req, res) => {
   try {
     const userId = req.user.id;
-    const favoriteRecipes = await Recipe.findAll({
-      include: {
-        model: Favorite,
-        where: { UserId: userId },
-        attributes: [], // Tidak perlu atribut dari tabel Favorite itu sendiri
-      },
+    // Mengubah kueri: mulai dari model Favorite dan include Recipe
+    const favorites = await Favorite.findAll({
+      where: { UserId: userId },
+      include: [{ model: Recipe }],
     });
+
+    // Ekstrak objek Recipe dari hasil favorit
+    const favoriteRecipes = favorites.map(fav => fav.Recipe);
+
     res.status(200).json(favoriteRecipes);
   } catch (error) {
     console.error('Gagal mengambil favorit:', error);
@@ -139,10 +139,10 @@ const getFavoriteRecipes = async (req, res) => {
   }
 };
 
-const deleteFavoriteRecipe = async (req, res) => { 
+const deleteFavoriteRecipe = async (req, res) => {
   const t = await db.transaction();
   try {
-    const { id } = req.params; // Menggunakan 'id' sesuai rute
+    const { id } = req.params;
     const user = req.user;
 
     const favorite = await Favorite.findOne({
@@ -160,13 +160,11 @@ const deleteFavoriteRecipe = async (req, res) => {
 
     await favorite.destroy({ transaction: t });
 
-    // Periksa apakah resep masih difavoritkan oleh pengguna lain
     const favoriteCount = await Favorite.count({
         where: { RecipeId: id },
         transaction: t
     });
 
-    // Jika resep tidak lagi difavoritkan oleh siapa pun, hapus dari tabel Recipes dan GCS
     if (favoriteCount === 0) {
       const recipe = await Recipe.findByPk(id, { transaction: t });
       if (recipe && recipe.imageUrl) {
@@ -188,8 +186,7 @@ const deleteFavoriteRecipe = async (req, res) => {
 
 const getRecipeById = async (req, res) => {
   try {
-    // Pastikan parameter diakses dengan nama yang benar, misal 'id' jika rute adalah /recipes/:id
-    const recipe = await Recipe.findByPk(req.params.id); // Menggunakan req.params.id
+    const recipe = await Recipe.findByPk(req.params.id);
 
     if (!recipe) {
       return res.status(404).json({ error: 'Resep tidak ditemukan.' });
@@ -205,21 +202,22 @@ const getRecipeById = async (req, res) => {
 const getFavoriteRecipeById = async (req, res) => {
   try {
     const userId = req.user.id;
-    const recipeId = req.params.id; // Menggunakan 'id' sesuai rute /favorites/:id
+    const recipeId = req.params.id;
 
+    // Mengubah kueri: mulai dari model Favorite dan include Recipe
     const favorite = await Favorite.findOne({
       where: {
         UserId: userId,
         RecipeId: recipeId,
       },
-      include: [{ model: Recipe }], // Menggabungkan model Recipe untuk mendapatkan detail
+      include: [{ model: Recipe }],
     });
 
     if (!favorite) {
       return res.status(404).json({ error: 'Resep favorit tidak ditemukan untuk pengguna ini.' });
     }
 
-    res.json(favorite.Recipe); // Mengembalikan objek Recipe yang terkait
+    res.json(favorite.Recipe);
   } catch (error) {
     console.error('Terjadi kesalahan saat mengambil detail resep favorit:', error);
     res.status(500).json({ error: 'Gagal mengambil detail resep favorit.' });
@@ -228,8 +226,8 @@ const getFavoriteRecipeById = async (req, res) => {
 
 module.exports = {
   generateRecipe,
-  addFavoriteRecipe,      
-  getFavoriteRecipes,      
+  addFavoriteRecipe,
+  getFavoriteRecipes,
   deleteFavoriteRecipe,
   getRecipeById,
   getFavoriteRecipeById,

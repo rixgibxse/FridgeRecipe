@@ -6,7 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const recipeRoutes = require('./routes/recipeRoutes');
 const authRoutes = require('./routes/authRoutes');
-const { db } = require('./models');
+const { db } = require('./models'); // Mengimpor 'db' dari file index.js di folder models
 
 // Import test functions
 const { testGeminiConnection } = require('./config/geminiConfig');
@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Root endpoint
+// Root endpoint (duplikat, akan saya komentari salah satunya)
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to the FridgeRecipe API!' });
 });
@@ -97,14 +97,14 @@ app.get('/health', async (req, res) => {
   res.status(statusCode).json(healthStatus);
 });
 
-// Add a simple root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Fridge Recipe Backend API',
-    status: 'running',
-    timestamp: new Date().toISOString()
-  });
-});
+// Root endpoint kedua, pilih salah satu atau gabungkan
+// app.get('/', (req, res) => {
+//   res.json({
+//     message: 'Fridge Recipe Backend API',
+//     status: 'running',
+//     timestamp: new Date().toISOString()
+//   });
+// });
 
 // Environment variables check
 const checkEnvironmentVariables = () => {
@@ -120,7 +120,7 @@ const checkEnvironmentVariables = () => {
   ];
 
   const missingVars = requiredVars.filter(varName => !process.env[varName]);
-  
+
   if (missingVars.length > 0) {
     console.error('❌ Missing required environment variables:');
     missingVars.forEach(varName => {
@@ -145,13 +145,13 @@ const connectWithRetry = async (retries = 3, delay = 3000) => {
     } catch (error) {
       console.error(`❌ Database connection failed. Retrying in ${delay / 1000} seconds... (${retries - 1} attempts left)`);
       console.error('Error details:', error.message);
-      
+
       retries -= 1;
       if (retries === 0) {
         console.error('❌ All database connection attempts failed');
         throw error;
       }
-      
+
       await new Promise(res => setTimeout(res, delay));
     }
   }
@@ -162,13 +162,13 @@ const startServer = async () => {
     console.log('🚀 Starting server initialization...');
     console.log('📍 Port:', port);
     console.log('🌍 Environment:', process.env.NODE_ENV || 'development');
-    
+
     // 1. Check environment variables
     checkEnvironmentVariables();
-    
+
     // 2. Connect to database
     await connectWithRetry();
-    
+
     // 3. Start server first, then test services
     const server = app.listen(port, '0.0.0.0', () => {
       console.log(`🎉 Server running successfully on port: ${port}`);
@@ -181,7 +181,7 @@ const startServer = async () => {
 
     // 4. Test external services (non-blocking)
     console.log('🔍 Testing external services...');
-    
+
     // Test services in parallel but don't block startup
     Promise.all([
       testGeminiConnection().catch(err => console.error('❌ Gemini test failed:', err.message)),
@@ -193,7 +193,7 @@ const startServer = async () => {
     }).catch(err => {
       console.error('⚠️ Some external services failed, but server is running');
     });
-    
+
     // Handle server errors
     server.on('error', (error) => {
       console.error('💥 Server error:', error);
