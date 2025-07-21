@@ -1,11 +1,17 @@
+// backend/models/index.js
 const { db } = require('../config/database');
 const User = require('./user');
 const Recipe = require('./recipe');
 const Favorite = require('./favorite');
 
-// Mendefinisikan hubungan Many-to-Many
-User.belongsToMany(Recipe, { through: Favorite });
-Recipe.belongsToMany(User, { through: Favorite });
+Favorite.belongsTo(User, { foreignKey: 'UserId' });
+Favorite.belongsTo(Recipe, { foreignKey: 'RecipeId' });
+
+User.hasMany(Favorite, { foreignKey: 'UserId' });
+Recipe.hasMany(Favorite, { foreignKey: 'RecipeId' });
+
+User.belongsToMany(Recipe, { through: Favorite, foreignKey: 'UserId' });
+Recipe.belongsToMany(User, { through: Favorite, foreignKey: 'RecipeId' });
 
 module.exports = {
   db,
