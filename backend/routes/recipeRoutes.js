@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
-
-const {
-  generateRecipe,
-  addFavorite,
-  getFavorites,
-  removeFavorite,
-  getRecipeById,
-} = require('../controllers/recipeController');
-
+const recipeController = require('../controllers/recipeController');
 const { protect } = require('../middleware/authMiddleware');
 
-router.post('/generate-recipe', generateRecipe);
+// Route untuk membuat resep
+router.post('/generate-recipe', protect, recipeController.generateRecipe);
 
-router.route('/favorites')
-  .post(protect, addFavorite)
-  .get(protect, getFavorites);
+// Mendapatkan semua resep favorit untuk pengguna yang diautentikasi
+router.get('/favorites', protect, recipeController.getFavoriteRecipes);
 
-router.delete('/favorites/:recipeId', protect, removeFavorite);
+// Mendapatkan detail resep favorit berdasarkan ID
+router.get('/favorites/:id', protect, recipeController.getFavoriteRecipeById);
 
-router.get('/recipes/:recipeId', getRecipeById);
+// Menyimpan resep ke favorit
+router.post('/favorites', protect, recipeController.addFavoriteRecipe);
+
+// Menghapus resep favorit
+router.delete('/favorites/:id', protect, recipeController.deleteFavoriteRecipe);
+
+// Mendapatkan detail resep umum berdasarkan ID (jika ada rute ini)
+router.get('/recipes/:id', recipeController.getRecipeById);
 
 module.exports = router;
