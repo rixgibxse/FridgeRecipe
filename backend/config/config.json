@@ -17,10 +17,10 @@
     "username": "fridgerecipe-db",
     "password": "Redaksi123",
     "database": "fridge_recipe_db",
-    "host": "/cloudsql/fridgerecipeapps:asia-southeast2:fridge-recipe-db",
+    "host": "/cloudsql/turnkey-env-466523-u2:asia-southeast2:fridgerecipe-db-instance",
     "dialect": "mysql",
     "dialectOptions": {
-      "socketPath": "/cloudsql/fridgerecipeapps:asia-southeast2:fridge-recipe-db"
+      "socketPath": "/cloudsql/turnkey-env-466523-u2:asia-southeast2:fridgerecipe-db-instance"
     }
   }
 }
