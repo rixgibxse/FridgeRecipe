@@ -1,6 +1,31 @@
-@@ .. @@
-   }
- 
+import { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import api from '../services/api';
+
+const SavedRecipeDetailPage = () => {
+  const { recipeId } = useParams();
+  const navigate = useNavigate();
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await api.get(`/favorites/${recipeId}`);
+        setRecipe(response.data);
+      } catch (err) {
+        setError('Gagal memuat detail resep.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipe();
+  }, [recipeId]);
+
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
   };
@@ -28,7 +53,7 @@
         </div>
       `;
       document.body.appendChild(successModal);
-      
+
       setTimeout(() => {
         navigate('/favorites');
       }, 2000);
@@ -58,22 +83,12 @@
       setShowDeleteModal(false);
     }
   };
-   return (
--    <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-5xl mx-auto mt-10 border border-purple-200">
-+    <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-2xl max-w-5xl mx-auto mt-6 sm:mt-10 border border-purple-200 mx-4 sm:mx-auto">
-       {/* Tombol Kembali */}
-       <div className="mb-4">
-         <Link
-           to="/favorites"
--          className="inline-block text-black px-4 py-2 rounded-full hover:text-purple-700 transition"
-+          className="inline-block text-black px-3 sm:px-4 py-2 text-sm sm:text-base rounded-full hover:text-purple-700 transition"
-         >
-           ← Kembali
-         </Link>
-       </div>
- 
-       {/* Judul */}
--      <h2 className="text-4xl font-bold text-purple-700 mb-6 text-center">{recipe.recipeName}</h2>
+
+  if (loading) return <div className="text-center mt-10">Memuat resep...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+  if (!recipe) return <div className="text-center mt-10">Resep tidak ditemukan.</div>;
+
+  return (
     <>
       <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-2xl max-w-5xl mx-auto mt-6 sm:mt-10 border border-purple-200 mx-4 sm:mx-auto">
         {/* Tombol Kembali */}
@@ -131,8 +146,8 @@
               ))}
             </ol>
           </div>
-         </div>
-       </div>
+        </div>
+      </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
@@ -172,7 +187,7 @@
         </div>
       )}
     </>
-   );
- };
- 
- export default SavedRecipeDetailPage;
+  );
+};
+
+export default SavedRecipeDetailPage;
