@@ -100,36 +100,36 @@ const SavedRecipeDetailPage = () => {
             ← Kembali
           </Link>
         </div>
-
+  
         {/* Judul */}
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-700 mb-4 sm:mb-6 text-center">{recipe.recipeName}</h2>
-
+  
         <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-10">
           {/* Kolom Gambar */}
           <div className="lg:w-1/2">
-            <div className="relative">
+            <div>
               <img
                 src={recipe.imageUrl}
                 alt={recipe.recipeName}
                 className="w-full h-64 sm:h-80 lg:h-auto rounded-xl shadow-lg object-cover"
               />
-              {/* Delete Button */}
-              <button
-                onClick={handleDeleteClick}
-                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700 transition duration-300 flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-                Hapus dari Favorit
-              </button>
             </div>
+            {/* Tombol Hapus */}
+            <button
+              onClick={handleDeleteClick}
+              className="mt-4 w-full bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700 transition duration-300 flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              Hapus dari Favorit
+            </button>
           </div>
-
+  
           {/* Kolom Detail */}
           <div className="lg:w-1/2">
             <p className="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6 leading-relaxed">{recipe.description}</p>
-
+  
             <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-purple-700 mb-3">Bahan-bahan:</h3>
             <ul className="list-disc list-inside mb-4 sm:mb-6 space-y-1 sm:space-y-2 text-sm sm:text-base text-gray-800">
               {recipe.ingredients.map((item, index) => (
@@ -138,7 +138,7 @@ const SavedRecipeDetailPage = () => {
                 </li>
               ))}
             </ul>
-
+  
             <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-purple-700 mb-3">Instruksi:</h3>
             <ol className="list-decimal list-inside space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-800">
               {recipe.instructions.map((step, index) => (
@@ -148,7 +148,7 @@ const SavedRecipeDetailPage = () => {
           </div>
         </div>
       </div>
-
+  
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
